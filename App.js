@@ -13,6 +13,9 @@ import {
 } from '@viro-community/react-viro';
 
 const InitialScene = props => {
+  const [rotation, setRotation] = useState([-45, 50, 40]);
+  const [position, setPosition] = useState([-45, 50, 40]);
+
   let data = props.sceneNavigator.viroAppProps;
 
   ViroMaterials.createMaterials({
@@ -64,7 +67,7 @@ const InitialScene = props => {
           source={require('./assets/skull/skull3d.obj')}
           position={[0, 0, -5]}
           scale={[0.05, 0.05, 0.05]}
-          rotation={[-45, 50, 40]}
+          rotation={rotation}
           type="OBJ"
           animation={{name: 'rotatebox', loop: true, run: true}}
         />
@@ -73,7 +76,7 @@ const InitialScene = props => {
           source={require('./assets/tv/tv3d.obj')}
           position={[0, 0, -5]}
           scale={[0.005, 0.005, 0.005]}
-          rotation={[-45, 50, 40]}
+          rotation={rotation}
           materials={['tvbody']}
           type="OBJ"
           animation={{name: 'rotatebox', loop: true, run: true}}
@@ -84,7 +87,7 @@ const InitialScene = props => {
             source={require('./assets/ufo/ufo3d.obj')}
             position={[0, -1.5, -8]}
             scale={[0.05, 0.05, 0.05]}
-            // rotation={[-45, 50, 40]}
+            // rotation={rotation}
             type="OBJ"
             animation={{name: 'rotatebox', loop: true, run: true}}
           />
