@@ -10,8 +10,11 @@ import {
   ViroAnimations,
   Viro3DObject,
   ViroAmbientLight,
+  ViroARTrackingTargets,
+  ViroARImageMarker,
 } from '@viro-community/react-viro';
 
+// static Object/Model display with Rotation, Scaling and Positioning
 const InitialScene = props => {
   const [rotation, setRotation] = useState([-45, 50, 40]);
   const [position, setPosition] = useState([0, 0, -5]);
@@ -31,7 +34,7 @@ const InitialScene = props => {
   // rotate 90 degrees every 2.5seconds
   ViroAnimations.registerAnimations({
     rotatebox: {
-      duration: 1000,
+      duration: 2000,
       properties: {
         rotateY: '+=90',
       },
@@ -137,35 +140,84 @@ const InitialScene = props => {
   );
 };
 
-export default App = () => {
-  const [object, setObject] = useState('ufo');
+const DetectImageSceneAR = () => {
+  // registering our target(image)
+  ViroARTrackingTargets.createTargets({
+    skullImage: {
+      source: require('./assets/skull/Skull.jpg'),
+      orientation: 'Up',
+      physicalWidth: 0.165, // real world width in meters
+    },
+    ironManImage: {
+      source: require('./assets/IronMan/ironman-bg.jpeg'),
+      orientation: 'Up',
+      physicalWidth: 0.165, // real world width in meters
+    },
+    reactImage: {
+      source: require('./assets/react/react-bg.png'),
+      orientation: 'Up',
+      physicalWidth: 0.165, // real world width in meters
+    },
+  });
+
+  // if and when anchor is detected/found
+  const anchorFound = () => {
+    console.log('Anchor has been detected!');
+  };
 
   return (
-    <View style={styles.mainContainer}>
-      {/* works as Stack Navigator */}
-      <ViroARSceneNavigator
-        initialScene={{
-          scene: InitialScene,
-        }}
-        // pass objects (3D) to render on screen
-        viroAppProps={{object: object}}
-        style={{flex: 1}}
-      />
+    <ViroARScene>
+      <ViroARImageMarker target="skullImage" onAnchorFound={anchorFound}>
+        <ViroAmbientLight color={'#fff'} />
 
-      <View style={styles.controlsContainer}>
-        <TouchableOpacity onPress={() => setObject('skull')}>
-          <Text style={styles.text}>Display Skull</Text>
-        </TouchableOpacity>
+        <Viro3DObject
+          source={require('./assets/skull/skull3d.obj')}
+          scale={[0.008, 0.008, 0.008]}
+          rotation={[-170, 0, 0]}
+          type="OBJ"
+          resources={[
+            require('./assets/skull/Skull.jpg'),
+            require('./assets/skull/12140_Skull_v3_L2.mtl'),
+          ]}
+        />
+      </ViroARImageMarker>
 
-        <TouchableOpacity onPress={() => setObject('tv')}>
-          <Text style={styles.text}>Display TV</Text>
-        </TouchableOpacity>
+      <ViroARImageMarker target="ironManImage" onAnchorFound={anchorFound}>
+        <ViroAmbientLight color={'#fff'} />
 
-        <TouchableOpacity onPress={() => setObject('ufo')}>
-          <Text style={styles.text}>Display UFO</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
+        <Viro3DObject
+          source={require('./assets/IronMan/IronMan.obj')}
+          scale={[0.0008, 0.0008, 0.0008]}
+          rotation={[-90, 0, 0]}
+          type="OBJ"
+        />
+      </ViroARImageMarker>
+
+      <ViroARImageMarker target="reactImage" onAnchorFound={anchorFound}>
+        <ViroAmbientLight color={'#fff'} />
+
+        <Viro3DObject
+          source={require('./assets/react/react-logo.glb')}
+          scale={[2, 2, 2]}
+          position={[0, -1, 0]}
+          rotation={[-90, 0, 0]}
+          animation={{name: 'rotatebox', loop: true, run: true}}
+          type="GLB"
+        />
+      </ViroARImageMarker>
+    </ViroARScene>
+  );
+};
+
+export default App = () => {
+  return (
+    <ViroARSceneNavigator
+      autofocus={true}
+      initialScene={{
+        scene: DetectImageSceneAR,
+      }}
+      style={{flex: 1}}
+    />
   );
 };
 
