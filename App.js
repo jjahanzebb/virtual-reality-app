@@ -14,7 +14,8 @@ import {
 
 const InitialScene = props => {
   const [rotation, setRotation] = useState([-45, 50, 40]);
-  const [position, setPosition] = useState([-45, 50, 40]);
+  const [position, setPosition] = useState([0, 0, -5]);
+  const [scale, setScale] = useState([0.02, 0.02, 0.02]);
 
   let data = props.sceneNavigator.viroAppProps;
 
@@ -36,6 +37,35 @@ const InitialScene = props => {
       },
     },
   });
+
+  // function to move objects on drag (finger touch)
+  const moveObject = newPosition => {
+    setPosition(newPosition);
+  };
+
+  // function to rotate objects
+  const rotateObject = (rotateState, rotationFactor, source) => {
+    if (rotateState === 2) {
+      let newRotation = [
+        rotation[0] - rotationFactor,
+        rotation[1] - rotationFactor,
+        rotation[2] - rotationFactor,
+      ];
+
+      setRotation(newRotation);
+    }
+  };
+
+  // function to rotate objects
+  const scaleObject = (pinchState, scaleFactor, source) => {
+    if (pinchState === 2) {
+      let currentScale = scale[0]; // 1 value is enough as all scale values are same
+      let newScale = currentScale * scaleFactor;
+      let newScaleArray = [newScale, newScale, newScale];
+
+      setScale(newScaleArray);
+    }
+  };
 
   return (
     // works as View
@@ -65,31 +95,41 @@ const InitialScene = props => {
       {data.object === 'skull' ? (
         <Viro3DObject
           source={require('./assets/skull/skull3d.obj')}
-          position={[0, 0, -5]}
-          scale={[0.05, 0.05, 0.05]}
+          position={position}
+          scale={scale}
           rotation={rotation}
           type="OBJ"
-          animation={{name: 'rotatebox', loop: true, run: true}}
+          onDrag={moveObject}
+          onRotate={rotateObject}
+          onPinch={scaleObject}
+          resources={[
+            require('./assets/skull/Skull.jpg'),
+            require('./assets/skull/12140_Skull_v3_L2.mtl'),
+          ]}
         />
       ) : data.object === 'tv' ? (
         <Viro3DObject
           source={require('./assets/tv/tv3d.obj')}
-          position={[0, 0, -5]}
-          scale={[0.005, 0.005, 0.005]}
+          position={position}
+          scale={scale}
           rotation={rotation}
           materials={['tvbody']}
           type="OBJ"
-          animation={{name: 'rotatebox', loop: true, run: true}}
+          onDrag={moveObject}
+          onRotate={rotateObject}
+          onPinch={scaleObject}
         />
       ) : (
         data.object === 'ufo' && (
           <Viro3DObject
             source={require('./assets/ufo/ufo3d.obj')}
-            position={[0, -1.5, -8]}
-            scale={[0.05, 0.05, 0.05]}
-            // rotation={rotation}
+            position={position}
+            scale={scale}
+            rotation={rotation}
             type="OBJ"
-            animation={{name: 'rotatebox', loop: true, run: true}}
+            onDrag={moveObject}
+            onRotate={rotateObject}
+            onPinch={scaleObject}
           />
         )
       )}
