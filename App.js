@@ -17,7 +17,7 @@ import {
 export default App = () => {
   return (
     <View>
-      <Text>Initial VR App..</Text>
+      <Text>Initial VR App</Text>
     </View>
   );
 };

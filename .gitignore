@@ -32,8 +32,6 @@ local.properties
 *.hprof
 .cxx/
 
-android/app/build/
-
 # node.js
 #
 node_modules/
